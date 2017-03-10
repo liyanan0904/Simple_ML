@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #-*- coding : utf-8 -*-
-
+import random
 
 class Perception(object):
     def __init__(self, input_num, activator):
@@ -8,6 +8,7 @@ class Perception(object):
     	self.activator = activator
     	self.weights = [0.0 for _ in range(input_num)]
     	self.bias = 0.0
+        self.idx = []
 
     def __str__(self):
 
@@ -17,12 +18,34 @@ class Perception(object):
 
     	return self.activator(reduce(lambda a, b: a + b, map(lambda(x, w) : x * w, zip(input_vec, self.weights)), 0.0) + self.bias)
 
-    def train(self, input_vec, labels, iteration, rate):
-    	samples = zip(input_vec, labels)
-    	for (input_vec, label) in samples:
-    		output = self.predict(input_vec)
+    # def train(self, input_vec, labels, iteration, rate):
+    # 	samples = zip(input_vec, labels)
+    #     it = 0
+    #     while it < iteration:
+    #         for (input_vec, label) in samples:
+    #             output = self.predict(input_vec)
+    #             self._update_weights(input_vec, output, label, rate)
+    #         it += 1
 
-    		self._update_weights(input_vec, output, label, rate)
+    def train_sdg(self, input_vec, labels, iteration, rate):
+        samples = zip(input_vec, labels)
+        size2 = len(samples)
+        it = 0
+        print "begin sdg"
+        while it < iteration:
+            i = random.randint(0, size2 - 1)
+            print i
+            while i not in self.idx and len(self.idx) < iteration:
+                i = random.randint(0, size - 1)
+            self.idx.append(i)
+            (input_vec, label) = samples[i]
+            output = self.predict(input_vec)
+            self._update_weights(input_vec, output, label, rate)
+            it += 1
+
+
+
+
 
     def _update_weights(self, input_vec, output, label, rate):
     	delta = label - output
