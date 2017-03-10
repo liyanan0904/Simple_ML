@@ -8,7 +8,6 @@ class Perception(object):
     	self.activator = activator
     	self.weights = [0.0 for _ in range(input_num)]
     	self.bias = 0.0
-        self.idx = []
 
     def __str__(self):
 
@@ -29,15 +28,12 @@ class Perception(object):
 
     def train_sdg(self, input_vec, labels, iteration, rate):
         samples = zip(input_vec, labels)
-        size2 = len(samples)
+        size = len(samples)
         it = 0
         print "begin sdg"
+        idx = range(size)
         while it < iteration:
-            i = random.randint(0, size2 - 1)
-            print i
-            while i not in self.idx and len(self.idx) < iteration:
-                i = random.randint(0, size - 1)
-            self.idx.append(i)
+            i = random.sample(idx, 1)[0]
             (input_vec, label) = samples[i]
             output = self.predict(input_vec)
             self._update_weights(input_vec, output, label, rate)
